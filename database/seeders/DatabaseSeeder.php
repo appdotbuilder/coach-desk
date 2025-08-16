@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'coach@coachdesk.com',
         ]);
 
-        // Seed CRM data
-        $this->call(CrmSeeder::class);
+        // Seed fitness studio data
+        $this->call(FitnessStudioSeeder::class);
     }
 }

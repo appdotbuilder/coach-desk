@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * App\Models\Client
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $fitness_goals
  * @property string|null $health_conditions
  * @property string|null $emergency_contact
+ * @property int $subscription_type
+ * @property int $credits_remaining
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -65,6 +68,8 @@ class Client extends Model
         'fitness_goals',
         'health_conditions',
         'emergency_contact',
+        'subscription_type',
+        'credits_remaining',
         'status',
     ];
 
@@ -75,6 +80,8 @@ class Client extends Model
      */
     protected $casts = [
         'date_of_birth' => 'date',
+        'subscription_type' => 'integer',
+        'credits_remaining' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -90,13 +97,25 @@ class Client extends Model
     }
 
     /**
-     * Get all workout sessions for the client.
+     * Get all workouts for the client.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function workouts(): BelongsToMany
+    {
+        return $this->belongsToMany(Workout::class, 'workout_clients')
+            ->withPivot('attended', 'credits_deducted', 'booking_date')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get workout client bookings.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function workoutSessions(): HasMany
+    public function workoutClients(): HasMany
     {
-        return $this->hasMany(WorkoutSession::class);
+        return $this->hasMany(WorkoutClient::class);
     }
 
     /**
@@ -124,12 +143,40 @@ class Client extends Model
     }
 
     /**
-     * Get the client's remaining credits.
+     * Get subscription type name.
      *
-     * @return int
+     * @return string
      */
-    public function getRemainingCreditsAttribute(): int
+    public function getSubscriptionTypeNameAttribute(): string
     {
-        return $this->activeSubscription->credits_remaining ?? 0;
+        return match($this->subscription_type) {
+            6 => '6 Sessions',
+            13 => '13 Sessions',
+            default => 'Unknown'
+        };
+    }
+
+    /**
+     * Check if client has low credits (less than 2).
+     *
+     * @return bool
+     */
+    public function hasLowCreditsAttribute(): bool
+    {
+        return $this->credits_remaining < 2;
+    }
+
+    /**
+     * Deduct one credit from the client.
+     *
+     * @return bool
+     */
+    public function deductCredit(): bool
+    {
+        if ($this->credits_remaining > 0) {
+            $this->decrement('credits_remaining');
+            return true;
+        }
+        return false;
     }
 }

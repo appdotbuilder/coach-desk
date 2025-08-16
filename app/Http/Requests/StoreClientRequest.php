@@ -30,6 +30,8 @@ class StoreClientRequest extends FormRequest
             'fitness_goals' => 'nullable|string',
             'health_conditions' => 'nullable|string',
             'emergency_contact' => 'nullable|string',
+            'subscription_type' => 'required|in:6,13',
+            'credits_remaining' => 'required|integer|min:0',
             'status' => 'required|in:active,inactive,suspended',
         ];
     }

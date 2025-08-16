@@ -4,82 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
-use App\Models\ClientSubscription;
-use App\Models\WorkoutSession;
-use Illuminate\Http\Request;
+use App\Models\Workout;
+use App\Models\WorkoutClient;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     /**
-     * Display the dashboard with CRM statistics.
+     * Display the dashboard with statistics.
      */
     public function index()
     {
-        // Basic stats
-        $totalClients = Client::count();
-        $activeClients = Client::active()->count();
-        $totalSessions = WorkoutSession::count();
-        $thisMonthSessions = WorkoutSession::thisMonth()->completed()->count();
+        $currentMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
 
-        // Monthly stats (SQLite compatible)
-        $monthlyStats = WorkoutSession::selectRaw("
-                CAST(strftime('%m', scheduled_at) AS INTEGER) as month,
-                CAST(strftime('%Y', scheduled_at) AS INTEGER) as year,
-                COUNT(*) as total_sessions,
-                COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_sessions
-            ")
-            ->where('scheduled_at', '>=', now()->subMonths(12))
-            ->groupByRaw("strftime('%Y', scheduled_at), strftime('%m', scheduled_at)")
-            ->orderByRaw("strftime('%Y', scheduled_at) DESC, strftime('%m', scheduled_at) DESC")
-            ->limit(12)
-            ->get();
+        // Monthly statistics
+        $monthlyStats = [
+            'total_checkins' => WorkoutClient::where('attended', true)
+                ->whereBetween('created_at', [$currentMonth, $endOfMonth])
+                ->count(),
+            
+            'unique_clients' => WorkoutClient::where('attended', true)
+                ->whereBetween('created_at', [$currentMonth, $endOfMonth])
+                ->distinct('client_id')
+                ->count(),
+            
+            'checkins_by_subscription' => WorkoutClient::join('clients', 'workout_clients.client_id', '=', 'clients.id')
+                ->where('workout_clients.attended', true)
+                ->whereBetween('workout_clients.created_at', [$currentMonth, $endOfMonth])
+                ->selectRaw('clients.subscription_type, COUNT(*) as total_count')
+                ->groupBy('clients.subscription_type')
+                ->pluck('total_count', 'subscription_type')
+                ->mapWithKeys(fn($count, $type) => [$type . ' Sessions' => (int) $count])
+                ->toArray(),
+        ];
 
-        // Upcoming sessions (next 7 days)
-        $upcomingSessions = WorkoutSession::with(['client', 'clientSubscription.subscriptionType'])
-            ->scheduled()
-            ->whereBetween('scheduled_at', [now(), now()->addDays(7)])
-            ->orderBy('scheduled_at')
-            ->limit(10)
-            ->get();
+        // Quick stats
+        $quickStats = [
+            'total_clients' => Client::where('status', 'active')->count(),
+            'low_credit_clients' => Client::where('status', 'active')
+                ->where('credits_remaining', '<', 2)
+                ->count(),
+            'upcoming_workouts' => Workout::where('status', 'active')
+                ->where('scheduled_at', '>', now())
+                ->where('scheduled_at', '<', now()->addDays(7))
+                ->count(),
+            'todays_workouts' => Workout::where('status', 'active')
+                ->whereDate('scheduled_at', today())
+                ->count(),
+        ];
 
-        // Low credit alerts
-        $lowCreditAlerts = ClientSubscription::with(['client', 'subscriptionType'])
-            ->active()
-            ->lowCredits()
-            ->orderBy('credits_remaining')
-            ->limit(10)
-            ->get();
-
-        // Recent clients
-        $recentClients = Client::with(['activeSubscription.subscriptionType'])
+        // Recent activity
+        $recentBookings = WorkoutClient::with(['client', 'workout'])
             ->latest()
             ->limit(5)
             ->get();
 
-        // Revenue data (last 6 months, SQLite compatible)
-        $revenueData = ClientSubscription::selectRaw("
-                CAST(strftime('%m', created_at) AS INTEGER) as month,
-                CAST(strftime('%Y', created_at) AS INTEGER) as year,
-                SUM(amount_paid) as revenue
-            ")
-            ->where('created_at', '>=', now()->subMonths(6))
-            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
-            ->orderByRaw("strftime('%Y', created_at) DESC, strftime('%m', created_at) DESC")
-            ->get();
+        $lowCreditClients = Client::where('status', 'active')
+            ->where('credits_remaining', '<', 2)
+            ->limit(5)
+            ->get(['id', 'name', 'email', 'credits_remaining']);
 
         return Inertia::render('dashboard', [
-            'stats' => [
-                'totalClients' => $totalClients,
-                'activeClients' => $activeClients,
-                'totalSessions' => $totalSessions,
-                'thisMonthSessions' => $thisMonthSessions,
-            ],
             'monthlyStats' => $monthlyStats,
-            'upcomingSessions' => $upcomingSessions,
-            'lowCreditAlerts' => $lowCreditAlerts,
-            'recentClients' => $recentClients,
-            'revenueData' => $revenueData,
+            'quickStats' => $quickStats,
+            'recentBookings' => $recentBookings,
+            'lowCreditClients' => $lowCreditClients,
         ]);
     }
 }

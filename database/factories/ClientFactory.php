@@ -47,6 +47,10 @@ class ClientFactory extends Factory
                 'None'
             ]),
             'emergency_contact' => $this->faker->name() . ' - ' . $this->faker->phoneNumber(),
+            'subscription_type' => $this->faker->randomElement([6, 13]),
+            'credits_remaining' => function (array $attributes) {
+                return random_int(0, $attributes['subscription_type']);
+            },
             'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\WorkoutSessionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\WorkoutController;
+use App\Http\Controllers\WorkoutClientController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,8 +25,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Client management routes
     Route::resource('clients', ClientController::class);
     
-    // Workout session management routes
-    Route::resource('sessions', WorkoutSessionController::class);
+    // Workout management routes
+    Route::resource('workouts', WorkoutController::class);
+    
+    // Workout-client booking management routes
+    Route::resource('workout-clients', WorkoutClientController::class);
+    
+    // Notification management routes
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications', [NotificationController::class, 'store'])->name('notifications.store');
 });
 
 require __DIR__.'/settings.php';

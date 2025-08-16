@@ -1,179 +1,213 @@
-import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import React from 'react';
+import { Head, Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
 
 export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
-
     return (
         <>
-            <Head title="Coach Desk - Personal Training CRM">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-            </Head>
-            <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 text-gray-900 lg:justify-center lg:p-8 dark:from-gray-900 dark:to-gray-800 dark:text-white">
-                <header className="mb-6 w-full max-w-[335px] text-sm lg:max-w-6xl">
-                    <nav className="flex items-center justify-end gap-4">
-                        {auth.user ? (
-                            <Link
-                                href={route('dashboard')}
-                                className="inline-block rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-                            >
-                                Dashboard
-                            </Link>
-                        ) : (
-                            <>
-                                <Link
-                                    href={route('login')}
-                                    className="inline-block rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-                                >
-                                    Log in
-                                </Link>
-                                <Link
-                                    href={route('register')}
-                                    className="inline-block rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-                                >
-                                    Start Free Trial
-                                </Link>
-                            </>
-                        )}
-                    </nav>
-                </header>
-
-                <main className="flex w-full max-w-6xl flex-col items-center text-center">
-                    {/* Hero Section */}
-                    <div className="mb-16">
-                        <div className="mb-6">
-                            <h1 className="mb-4 text-5xl font-bold lg:text-6xl">
-                                <span className="text-blue-600">💪 Coach Desk</span>
+            <Head title="Fitness Studio Management" />
+            
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+                {/* Header */}
+                <div className="relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-90"></div>
+                    <div className="relative px-6 pt-16 pb-20 sm:px-12 sm:pt-24 sm:pb-32 lg:px-16 lg:pt-32 lg:pb-40">
+                        <div className="mx-auto max-w-4xl text-center">
+                            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                                <span className="block">🏋️‍♀️ Fitness Studio</span>
+                                <span className="block text-purple-200">Management System</span>
                             </h1>
-                            <p className="text-xl text-gray-600 lg:text-2xl dark:text-gray-300">
-                                The Complete CRM Solution for Personal Trainers
+                            <p className="mt-6 text-lg leading-8 text-purple-100 sm:text-xl">
+                                Streamline your fitness studio operations with our comprehensive management platform. 
+                                Track clients, manage workouts, and boost engagement with automated notifications.
+                            </p>
+                            
+                            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                                <Link href="/login">
+                                    <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50 text-lg px-8 py-3">
+                                        🔑 Admin Login
+                                    </Button>
+                                </Link>
+                                <Link href="/dashboard">
+                                    <Button 
+                                        size="lg" 
+                                        variant="outline" 
+                                        className="border-white text-white hover:bg-white hover:text-purple-600 text-lg px-8 py-3"
+                                    >
+                                        📊 View Dashboard
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Features Section */}
+                <div className="py-16 sm:py-24 lg:py-32">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mx-auto max-w-2xl text-center">
+                            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                                ✨ Powerful Features for Your Studio
+                            </h2>
+                            <p className="mt-6 text-lg leading-8 text-gray-600">
+                                Everything you need to run a successful fitness studio in one comprehensive platform.
                             </p>
                         </div>
-                        <p className="mb-8 text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed dark:text-gray-200">
-                            Streamline your personal training business with powerful client management, 
-                            session tracking, subscription handling, and automated notifications. 
-                            Focus on what you do best - training clients!
-                        </p>
                         
-                        {!auth.user && (
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link
-                                    href={route('register')}
-                                    className="inline-block rounded-lg bg-blue-600 px-8 py-3 text-lg font-semibold text-white hover:bg-blue-700 transition-colors shadow-lg"
-                                >
-                                    Get Started Free
-                                </Link>
-                                <Link
-                                    href={route('login')}
-                                    className="inline-block rounded-lg border-2 border-blue-600 px-8 py-3 text-lg font-semibold text-blue-600 hover:bg-blue-50 transition-colors dark:text-blue-400 dark:hover:bg-gray-700"
-                                >
-                                    Sign In
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+                            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+                                {/* Client Management */}
+                                <div className="flex flex-col bg-white p-8 rounded-2xl shadow-lg">
+                                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-blue-500">
+                                        <span className="text-2xl">👥</span>
+                                    </div>
+                                    <dt className="text-xl font-semibold leading-7 text-gray-900">
+                                        Client Management
+                                    </dt>
+                                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                                        <p className="flex-auto">
+                                            Manage client profiles, track subscription types (6 or 13 sessions), 
+                                            monitor remaining credits, and maintain detailed health records.
+                                        </p>
+                                        <div className="mt-6">
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Subscription tracking
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Credit management
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Health profiles
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </div>
 
-                    {/* Features Grid */}
-                    <div className="mb-16 w-full">
-                        <h2 className="mb-12 text-3xl font-bold text-gray-900 dark:text-white">
-                            Everything You Need to Manage Your Training Business
-                        </h2>
-                        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">👥</div>
-                                <h3 className="mb-3 text-xl font-semibold">Client Management</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Store detailed client profiles with fitness goals, health conditions, 
-                                    and contact information all in one place.
-                                </p>
-                            </div>
-                            
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">📅</div>
-                                <h3 className="mb-3 text-xl font-semibold">Session Scheduling</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Schedule workout sessions, track attendance, and automatically 
-                                    manage client credits with every completed session.
-                                </p>
-                            </div>
-                            
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">💳</div>
-                                <h3 className="mb-3 text-xl font-semibold">Subscription Tracking</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Manage different subscription types, track remaining credits, 
-                                    and monitor expiration dates effortlessly.
-                                </p>
-                            </div>
-                            
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">📊</div>
-                                <h3 className="mb-3 text-xl font-semibold">Analytics Dashboard</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Get insights into monthly check-ins, revenue trends, and client 
-                                    engagement with beautiful charts and statistics.
-                                </p>
-                            </div>
-                            
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">🔔</div>
-                                <h3 className="mb-3 text-xl font-semibold">Smart Notifications</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Get automatically notified when clients are running low on credits 
-                                    or when subscriptions are about to expire.
-                                </p>
-                            </div>
-                            
-                            <div className="rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-                                <div className="mb-4 text-4xl">⚡</div>
-                                <h3 className="mb-3 text-xl font-semibold">Easy to Use</h3>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Intuitive interface designed specifically for personal trainers. 
-                                    No technical knowledge required - just focus on your clients.
-                                </p>
-                            </div>
+                                {/* Workout Scheduling */}
+                                <div className="flex flex-col bg-white p-8 rounded-2xl shadow-lg">
+                                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-blue-500">
+                                        <span className="text-2xl">🗓️</span>
+                                    </div>
+                                    <dt className="text-xl font-semibold leading-7 text-gray-900">
+                                        Workout Scheduling
+                                    </dt>
+                                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                                        <p className="flex-auto">
+                                            Create and manage workout sessions, handle client bookings, 
+                                            track attendance, and automatically deduct credits when clients attend.
+                                        </p>
+                                        <div className="mt-6">
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Session scheduling
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Attendance tracking
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Auto credit deduction
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </div>
+
+                                {/* Analytics & Notifications */}
+                                <div className="flex flex-col bg-white p-8 rounded-2xl shadow-lg">
+                                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-blue-500">
+                                        <span className="text-2xl">📈</span>
+                                    </div>
+                                    <dt className="text-xl font-semibold leading-7 text-gray-900">
+                                        Analytics & Alerts
+                                    </dt>
+                                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                                        <p className="flex-auto">
+                                            Comprehensive dashboard with monthly statistics, automated low-credit 
+                                            notifications, and detailed analytics to help grow your business.
+                                        </p>
+                                        <div className="mt-6">
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Monthly statistics
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Email notifications
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <span className="text-green-600">✓</span> Performance metrics
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
                     </div>
+                </div>
 
-                    {/* Stats Section */}
-                    <div className="mb-16 w-full rounded-2xl bg-white p-12 shadow-lg dark:bg-gray-800">
-                        <h2 className="mb-8 text-3xl font-bold">Built for Professional Trainers</h2>
-                        <div className="grid gap-8 md:grid-cols-3">
-                            <div>
-                                <div className="mb-2 text-4xl font-bold text-blue-600">100%</div>
-                                <p className="text-gray-600 dark:text-gray-300">Web-based - No installation required</p>
-                            </div>
-                            <div>
-                                <div className="mb-2 text-4xl font-bold text-blue-600">24/7</div>
-                                <p className="text-gray-600 dark:text-gray-300">Access your client data anytime, anywhere</p>
-                            </div>
-                            <div>
-                                <div className="mb-2 text-4xl font-bold text-blue-600">Secure</div>
-                                <p className="text-gray-600 dark:text-gray-300">Your client data is encrypted and protected</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* CTA Section */}
-                    {!auth.user && (
-                        <div className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-12 text-white shadow-xl">
-                            <h2 className="mb-4 text-3xl font-bold">Ready to Transform Your Training Business?</h2>
-                            <p className="mb-8 text-xl opacity-90">
-                                Join thousands of personal trainers who have simplified their client management with Coach Desk.
+                {/* Stats Preview */}
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600">
+                    <div className="px-6 py-16 sm:px-12 sm:py-24 lg:px-16">
+                        <div className="mx-auto max-w-4xl text-center">
+                            <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                                📊 Real-Time Studio Insights
+                            </h2>
+                            <p className="mt-6 text-lg text-purple-100">
+                                Get instant visibility into your studio's performance with our comprehensive dashboard.
                             </p>
-                            <Link
-                                href={route('register')}
-                                className="inline-block rounded-lg bg-white px-8 py-3 text-lg font-semibold text-blue-600 hover:bg-gray-100 transition-colors shadow-lg"
-                            >
-                                Start Your Free Trial Today
+                            
+                            <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                                <div className="text-center">
+                                    <div className="text-4xl font-bold text-white">📅</div>
+                                    <div className="mt-2 text-sm text-purple-200">Monthly Check-ins</div>
+                                    <div className="text-2xl font-semibold text-white">Track attendance</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-4xl font-bold text-white">👤</div>
+                                    <div className="mt-2 text-sm text-purple-200">Unique Clients</div>
+                                    <div className="text-2xl font-semibold text-white">Engagement metrics</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-4xl font-bold text-white">💳</div>
+                                    <div className="mt-2 text-sm text-purple-200">Credit Usage</div>
+                                    <div className="text-2xl font-semibold text-white">By subscription</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-4xl font-bold text-white">🔔</div>
+                                    <div className="mt-2 text-sm text-purple-200">Smart Alerts</div>
+                                    <div className="text-2xl font-semibold text-white">Low credits</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* CTA Section */}
+                <div className="py-16 sm:py-24">
+                    <div className="mx-auto max-w-2xl text-center">
+                        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                            🚀 Ready to Transform Your Studio?
+                        </h2>
+                        <p className="mt-6 text-lg leading-8 text-gray-600">
+                            Join the future of fitness studio management. Get started today!
+                        </p>
+                        <div className="mt-10">
+                            <Link href="/login">
+                                <Button 
+                                    size="lg" 
+                                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg px-8 py-3"
+                                >
+                                    🎯 Get Started Now
+                                </Button>
                             </Link>
                         </div>
-                    )}
-                </main>
+                    </div>
+                </div>
 
-                <footer className="mt-16 text-center text-sm text-gray-500 dark:text-gray-400">
-                    <p>© 2024 Coach Desk. Built with ❤️ for personal trainers.</p>
+                {/* Footer */}
+                <footer className="bg-gray-50 border-t">
+                    <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+                        <div className="text-center text-sm text-gray-500">
+                            <p>🏋️‍♀️ Fitness Studio Management System - Streamline Your Operations</p>
+                            <p className="mt-2">Built with Laravel, React & TypeScript</p>
+                        </div>
+                    </div>
                 </footer>
             </div>
         </>
